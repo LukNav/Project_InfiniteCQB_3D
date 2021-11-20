@@ -65,7 +65,7 @@ namespace ICQB.Player
         }
         public void OnMoveTowardsMouse(bool isMovingTowardsMouse)
         {
-            _isMovingTowardsMouse = isMovingTowardsMouse;
+            //_isMovingTowardsMouse = isMovingTowardsMouse;
         }
         public void OnSprint(bool isSprinting)
         {
@@ -117,7 +117,7 @@ namespace ICQB.Player
             float currentAngle = transform.rotation.eulerAngles.y;
             charactersRotationDelta = rotation < 0 ? rotation + 360 - currentAngle : rotation - currentAngle;
             //_isTurning = Mathf.Abs(charactersRotationDelta) > 0.1 ? true : false;
-            Debug.Log(charactersRotationDelta + " : " + currentAngle);
+            //Debug.Log(charactersRotationDelta + " : " + currentAngle);
         }
     }
 }

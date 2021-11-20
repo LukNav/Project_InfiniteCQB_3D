@@ -148,7 +148,7 @@ public class FieldOfView : MonoBehaviour
         Vector3 direction = target - _origin;
     
         float dotProduct = Vector3.Dot(transform.forward, direction.normalized);// If confused what dot is - google Dot Product
-        Debug.Log("dotAngleProduct: " + dotAngleProduct + " : DotProduct: " + dotProduct);
+        //Debug.Log("dotAngleProduct: " + dotAngleProduct + " : DotProduct: " + dotProduct);
         bool isTargetInsideFOVCone = dotProduct > dotAngleProduct;
 
         if (isTargetInsideFOVCone)
