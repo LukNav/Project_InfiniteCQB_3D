@@ -10,12 +10,9 @@ public class NPCAnimator : MonoBehaviour
     [SerializeField] private float animatorSprintAnimation_Pos = 1.5f; //Blend tree named "Movement" has sprint animation, which y position we place here
 
     [Header("Weapon Animator settings")]
-    [SerializeField] private Animator rigController;
-    [SerializeField] private string drawAnimationName = "Weapon_PistolDraw_Anim";
-
+    [SerializeField] internal Animator rigController;
+    [SerializeField] internal string drawAnimationName = "Weapon_PistolDraw_Anim";
     
-
-
     private NavMeshAgent _navMeshAgent;
 
     void Start()
@@ -23,11 +20,6 @@ public class NPCAnimator : MonoBehaviour
         _navMeshAgent = GetComponent<NavMeshAgent>();
         if (_navMeshAgent == null)
             Debug.LogError("NavMeshAgent component is missing");
-    }
-
-    public void OnTest()
-    {
-        Test();
     }
 
     // Update is called once per frame
@@ -46,11 +38,4 @@ public class NPCAnimator : MonoBehaviour
         animator.SetFloat("VelocityZ", direction.z, 0.1f, Time.fixedDeltaTime);
         animator.SetFloat("VelocityX", direction.x, 0.1f, Time.fixedDeltaTime);
     }
-
-    private void Test()
-    {
-        rigController.Play(drawAnimationName);
-    }
-
-
 }

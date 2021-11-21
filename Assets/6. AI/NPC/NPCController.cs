@@ -6,11 +6,15 @@ using UnityEngine.AI;
 
 public class NPCController : MonoBehaviour
 {
-    public bool shouldFollowTarget = true;
-    public FieldOfView fovController;
-    private NavMeshAgent _agent;
+    [SerializeField] private bool shouldFollowTarget = true;
+    [SerializeField] private FieldOfView fovController;
 
-    private BTSelector rootBT;
+    private NavMeshAgent _agent;
+    private ShootingController _shootingController;
+    private NPCAnimator _animatorController;
+    private BTSelector _rootBT;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -20,13 +24,27 @@ public class NPCController : MonoBehaviour
             Debug.LogError("Missing component: NavMeshAgent");
         }
 
+        _shootingController = GetComponent<ShootingController>();
+        if (_shootingController == null)
+        {
+            Debug.LogError("Missing component: ShootingController");
+        }
+
+        _animatorController = GetComponent<NPCAnimator>();
+        if (_animatorController == null)
+        {
+            Debug.LogError("Missing component: NPCAnimator");
+        }
+
         BTSequence followTargetSequence = new BTSequence(new List<BTNode>
         {
             new BTCanSeeTarget(fovController),
-            new BTMoveToTarget(fovController, _agent)
+            new BTMoveToTarget(fovController, _agent),
+            new BTPlayAnimation(_animatorController.rigController, _animatorController.drawAnimationName),
+            new BTShootTarget(_shootingController, fovController)
         });
 
-        rootBT = new BTSelector(new List<BTNode>
+        _rootBT = new BTSelector(new List<BTNode>
         {
             followTargetSequence
         });
@@ -36,7 +54,7 @@ public class NPCController : MonoBehaviour
     void Update()
     {
         if(shouldFollowTarget)
-            rootBT.Evaluate();
+            _rootBT.Evaluate();
     }
 
     

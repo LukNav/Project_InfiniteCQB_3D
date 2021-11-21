@@ -17,10 +17,11 @@ public class ShootingController : MonoBehaviour
     [Header("Weapon Settings")]
     //public float rateOfFire = 0.7f; //M1911 pistol Rate of fire is 85 rounds/min, thus 60s/85 = 0.7s delay
     public float bulletSpeed = 10f;
-
+    public float fireRate = 0.3f;
+    private float shootTimer;
     private bool isSprinting = false;
 
-    void Awake()
+    void Start()
     {
         _bulletPool = new List<GameObject>();
         for (int i = 0; i < bulletPoolSize; i++)
@@ -29,18 +30,15 @@ public class ShootingController : MonoBehaviour
             go.SetActive(false);
             _bulletPool.Add(go);
         }
-    }
-
-    void Start()
-    {
-        
+        shootTimer = 0f;
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        shootTimer += Time.deltaTime;
     }
+
     public void OnSprint(InputAction.CallbackContext context)
     {
         isSprinting = context.started || context.performed;
@@ -48,9 +46,18 @@ public class ShootingController : MonoBehaviour
 
     public void OnFire(InputAction.CallbackContext context)
     {
-        Debug.Log($"{context.phase} : {Time.time}");
         if (InputActionPhase.Started == context.phase)
         {
+            Fire();
+        }
+    }
+
+    public void Fire()
+    {
+        if(shootTimer > fireRate)
+        {
+            shootTimer = 0f;
+
             for (int i = 0; i < _bulletPool.Count; i++)
             {
                 if (!_bulletPool[i].activeInHierarchy)
@@ -61,16 +68,7 @@ public class ShootingController : MonoBehaviour
 
                     if (!isSprinting)
                     {
-                        Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());//---THIS COULD BE REUSED FROM PlayerController!!!!!!!!
-                        Plane plane = new Plane(Vector3.up, Vector3.zero);
-                        float distance;
-                        if (plane.Raycast(ray, out distance))
-                        {
-                            Vector3 target = ray.GetPoint(distance);
-                            Vector3 direction = target - firePoint.position;
-                            direction.Normalize();
-                            _bulletPool[i].GetComponent<Rigidbody>().velocity = direction * bulletSpeed;
-                        }
+                        ShootTowardMouse(i);
                         break;
                     }
 
@@ -78,6 +76,66 @@ public class ShootingController : MonoBehaviour
                     break;
                 }
             }
+        }
+
+        
+    }
+
+    public void ShootTowardMouse(int bulletPoolIndex)
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());//---THIS COULD BE REUSED FROM PlayerController!!!!!!!!
+        Plane plane = new Plane(Vector3.up, Vector3.zero);
+        float distance;
+        if (plane.Raycast(ray, out distance))
+        {
+            Vector3 firepointPos = firePoint.position;
+
+            Vector3 targetPos = ray.GetPoint(distance);
+            targetPos.y = firepointPos.y;
+            Vector3 direction = targetPos - firepointPos;
+            direction.Normalize();
+            _bulletPool[bulletPoolIndex].GetComponent<Rigidbody>().velocity = direction * bulletSpeed;
+        }
+    }
+
+    public void Fire(Transform target)
+    {
+        if (shootTimer > fireRate)
+        {
+            shootTimer = 0f;
+
+            for (int i = 0; i < _bulletPool.Count; i++)
+            {
+                if (!_bulletPool[i].activeInHierarchy)
+                {
+                    _bulletPool[i].transform.position = firePoint.position;
+                    _bulletPool[i].transform.rotation = firePoint.rotation;
+                    _bulletPool[i].SetActive(true);
+
+                    if (!isSprinting)
+                    {
+                        ShootTarget(i, target);
+                        break;
+                    }
+
+                    _bulletPool[i].GetComponent<Rigidbody>().velocity = firePoint.forward * bulletSpeed;
+                    break;
+                }
+            }
+        }
+    }
+
+    public void ShootTarget(int bulletPoolIndex, Transform target)//used mostly for NPCs
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());//---THIS COULD BE REUSED FROM PlayerController!!!!!!!!
+        Plane plane = new Plane(Vector3.up, Vector3.zero);
+        float distance;
+        if (plane.Raycast(ray, out distance))
+        {
+            Vector3 targetPos = target.position;
+            Vector3 direction = targetPos - firePoint.position;
+            direction.Normalize();
+            _bulletPool[bulletPoolIndex].GetComponent<Rigidbody>().velocity = direction * bulletSpeed;
         }
     }
 }
