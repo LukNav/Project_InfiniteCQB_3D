@@ -57,5 +57,10 @@ public class NPCController : MonoBehaviour
             _rootBT.Evaluate();
     }
 
-    
+    public void OnDisable()
+    {
+        fovController.enabled = false;
+        _agent.enabled = false;
+        _animatorController.enabled = false;
+    }
 }

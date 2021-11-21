@@ -11,10 +11,14 @@ public class StatsController : MonoBehaviour
 
     public Animator animator;// move this to other script, e.g. rigid body controller and subscribe to Die event
     public Collider collider;
+    public Collider weaponCollider; // This is not pretty, but works for demo - Has a task to fix in "Mid-Late Phase" epic
     public Rigidbody rigidBody;
     public Rigidbody rigsRigidBody;
     public GameObject hips;
-    public MonoBehaviour disableController;
+    public MonoBehaviour controller;
+
+    public delegate void DeathDelegate();
+    public DeathDelegate deathDelegate;
 
     bool isDead { get { return health <= 100; } }
 
@@ -33,9 +37,13 @@ public class StatsController : MonoBehaviour
         animator.enabled = false;
         collider.enabled = false;
         rigidBody.isKinematic = true;
+        
         hips.SetActive(true);
         rigsRigidBody.constraints = RigidbodyConstraints.None;
-        disableController.enabled = false;
+        controller.enabled = false;
+        weaponCollider.enabled = true;
+
+        deathDelegate();
         //Destroy(gameObject);
     }
 }

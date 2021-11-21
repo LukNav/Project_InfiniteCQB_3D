@@ -27,14 +27,15 @@ public class FieldOfView : MonoBehaviour
     float _startingAngle = 0f;
     float _angle;
     float _angleIncrease;
-    Mesh mesh;
-    float dotAngleProduct;
+    Mesh _mesh;
+    float _dotAngleProduct;
+    GameObject _fovGameObject;
     //public GameObject targetLockPrefab;
     //private GameObject _targetLockImage;
 
     void Start()
     {
-        if(mesh == null)
+        if(_mesh == null)
         {
             CreateFieldOfViewMesh();
         }
@@ -42,19 +43,19 @@ public class FieldOfView : MonoBehaviour
         _angleIncrease = fov / rayCount;
         _origin = Vector3.zero;
 
-        dotAngleProduct = Mathf.Abs(Vector3.Dot(transform.forward, Utils.GetVectorFromAngle((360 - fov) / 2)));
+        _dotAngleProduct = Mathf.Abs(Vector3.Dot(transform.forward, Utils.GetVectorFromAngle((360 - fov) / 2)));
 
         //_targetLockImage = Instantiate(targetLockPrefab);
     }
 
     private void CreateFieldOfViewMesh()
     {
-        mesh = new Mesh();
-        GameObject fovGameObject = Instantiate(fovPrefab);
-        MeshFilter meshFilter = fovGameObject.GetComponent<MeshFilter>();
+        _mesh = new Mesh();
+        _fovGameObject = Instantiate(fovPrefab);
+        MeshFilter meshFilter = _fovGameObject.GetComponent<MeshFilter>();
         if (meshFilter == null)
             Debug.LogError("fovPrefab MUST have Mesh filter and Mesh renderer");
-        meshFilter.mesh = mesh;
+        meshFilter.mesh = _mesh;
     }
 
     private void Update()
@@ -115,9 +116,9 @@ public class FieldOfView : MonoBehaviour
             _angle -= _angleIncrease;//-= for clockwise rotation
         }
 
-        mesh.vertices = vertices;
-        mesh.uv = uv;
-        mesh.triangles = triangles;
+        _mesh.vertices = vertices;
+        _mesh.uv = uv;
+        _mesh.triangles = triangles;
     }
 
     private void SetVisibleTargets()
@@ -149,7 +150,7 @@ public class FieldOfView : MonoBehaviour
     
         float dotProduct = Vector3.Dot(transform.forward, direction.normalized);// If confused what dot is - google Dot Product
         //Debug.Log("dotAngleProduct: " + dotAngleProduct + " : DotProduct: " + dotProduct);
-        bool isTargetInsideFOVCone = dotProduct > dotAngleProduct;
+        bool isTargetInsideFOVCone = dotProduct > _dotAngleProduct;
 
         if (isTargetInsideFOVCone)
             return true;
@@ -186,5 +187,9 @@ public class FieldOfView : MonoBehaviour
         return null;
     }
 
+    public void OnDisable()
+    {
+        _fovGameObject.SetActive(false);
+    }
 
 }
