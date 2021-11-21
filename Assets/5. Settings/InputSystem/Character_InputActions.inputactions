@@ -370,17 +370,6 @@
                 },
                 {
                     "name": "",
-                    "id": "d38d1c9e-1f48-4e8a-8339-e68e9c0e2550",
-                    "path": "<Keyboard>/w",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "RunTowardsMouse",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "d363bfe0-af2d-49a5-833f-f3f3940e3da3",
                     "path": "<Keyboard>/v",
                     "interactions": "",

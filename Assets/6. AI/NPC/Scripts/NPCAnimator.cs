@@ -6,12 +6,12 @@ using UnityEngine.AI;
 
 public class NPCAnimator : MonoBehaviour
 {
-    [SerializeField] private Animator animator;
-    [SerializeField] private float animatorSprintAnimation_Pos = 1.5f; //Blend tree named "Movement" has sprint animation, which y position we place here
+    public Animator animator;
+    public float animatorSprintAnimation_Pos = 1.5f; //Blend tree named "Movement" has sprint animation, which y position we place here
 
     [Header("Weapon Animator settings")]
-    [SerializeField] internal Animator rigController;
-    [SerializeField] internal string drawAnimationName = "Weapon_PistolDraw_Anim";
+    public Animator rigController;
+    public string drawAnimationName = "Weapon_PistolDraw_Anim";
     
     private NavMeshAgent _navMeshAgent;
 
@@ -34,7 +34,7 @@ public class NPCAnimator : MonoBehaviour
             direction = Quaternion.Euler(0, -transform.rotation.eulerAngles.y, 0) * direction;//rotate the movement direction relative to characters rotation (Can't use euler directly 'transform.rotation' since it is not as accurate for some reason)
         }
 
-        Debug.Log("remainingDistance: " + _navMeshAgent.remainingDistance + " isStopped: " + _navMeshAgent.isStopped);
+        //Debug.Log("remainingDistance: " + _navMeshAgent.remainingDistance + " isStopped: " + _navMeshAgent.isStopped);
         animator.SetFloat("VelocityZ", direction.z, 0.1f, Time.fixedDeltaTime);
         animator.SetFloat("VelocityX", direction.x, 0.1f, Time.fixedDeltaTime);
     }

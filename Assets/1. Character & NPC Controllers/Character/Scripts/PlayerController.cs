@@ -13,11 +13,11 @@ namespace ICQB.Player
     public class PlayerController : MonoBehaviour
     {
         [Header("Weapon UI settings")]
-        [SerializeField] private Texture2D cursorTexture;
-        [SerializeField] private CursorMode cursorMode = CursorMode.Auto;
+        public Texture2D cursorTexture;
+        public CursorMode cursorMode = CursorMode.Auto;
 
         [Header("Debug")]
-        [SerializeField] private Transform debugObject;
+        public Transform debugObject;
 
         public Vector3 MouseTarget { get { return _mouseTarget; } }
         private Vector3 _mouseTarget;

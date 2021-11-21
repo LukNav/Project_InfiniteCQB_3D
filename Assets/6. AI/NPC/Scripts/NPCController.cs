@@ -6,8 +6,8 @@ using UnityEngine.AI;
 
 public class NPCController : MonoBehaviour
 {
-    [SerializeField] private bool shouldFollowTarget = true;
-    [SerializeField] private FieldOfView fovController;
+    public bool shouldFollowTarget = true;
+    public FieldOfView fovController;
 
     private NavMeshAgent _agent;
     private ShootingController _shootingController;

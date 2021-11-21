@@ -189,7 +189,8 @@ public class FieldOfView : MonoBehaviour
 
     public void OnDisable()
     {
-        _fovGameObject.SetActive(false);
+        if(_fovGameObject != null)
+            _fovGameObject.SetActive(false);
     }
 
 }

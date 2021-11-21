@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class BulletController : MonoBehaviour
 {
-    [SerializeField] private TrailRenderer trailRenderer;
-    [SerializeField] private float damage = 15f;
+    public TrailRenderer trailRenderer;
+    public float damage = 15f;
 
     private bool _isActive = false;
     private Vector3 _lastPos;

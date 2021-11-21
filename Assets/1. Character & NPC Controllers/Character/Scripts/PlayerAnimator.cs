@@ -6,12 +6,12 @@ namespace ICQB.Player
     public class PlayerAnimator : MonoBehaviour
     {
         [Header("Animator settings")]
-        [SerializeField] private Animator animator;
-        [SerializeField] private float animatorSprintAnimation_Pos = 1.5f; //Blend tree named "Movement" has sprint animation, which y position we place here
+        public Animator animator;
+        public float animatorSprintAnimation_Pos = 1.5f; //Blend tree named "Movement" has sprint animation, which y position we place here
 
         [Header("Weapon Animator settings")]
-        [SerializeField] private Animator rigController;
-        [SerializeField] private string drawAnimationName = "Weapon_PistolDraw_Anim";
+        public Animator rigController;
+        public string drawAnimationName = "Weapon_PistolDraw_Anim";
 
         //[Header("Dependencies")]
         private PlayerController _playerController;
@@ -47,12 +47,9 @@ namespace ICQB.Player
 
         private void FixedUpdate()
         {
-            if (_playerController.DistanceFromCharacterToMouse > _playerMovementController.moveTowardsMouseDampDistance)
-            {
-                AnimateMovement();
-            }
-            else
-                DisableMovementAnimations();
+
+            AnimateMovement();
+
 
             AnimateCharacterTurning();
         }
@@ -67,10 +64,10 @@ namespace ICQB.Player
         {
             float speedModifier = _playerMovementController._isSprinting ? animatorSprintAnimation_Pos : 1; // Multiplies the Velocity float sent to Animator Blend Tree. Set 1 if not sprinting. 
 
-            speedModifier =
-                _playerMovementController._isMovingTowardsMouse
-                && _playerController.DistanceFromCharacterToMouse <= _playerMovementController.moveTowardsMouseDampDistance
-                ? 1 : speedModifier;
+            //speedModifier =
+            //    _playerMovementController._isMovingTowardsMouse
+            //    && _playerController.DistanceFromCharacterToMouse <= _playerMovementController.moveTowardsMouseDampDistance
+            //    ? 1 : speedModifier;
 
             Vector3 movementDirection = new Vector3(_playerMovementController._movementDirection.x, 0f, _playerMovementController._movementDirection.y);
             if (!_playerMovementController._isMovingTowardsMouse)//if not moving towards mouse should get a direction relative to characters rotation
@@ -86,7 +83,8 @@ namespace ICQB.Player
 
         private void DrawWeapon()
         {
-            rigController.Play(drawAnimationName);
+            if(rigController != null)
+                rigController.Play(drawAnimationName);
         }
     }
 }
