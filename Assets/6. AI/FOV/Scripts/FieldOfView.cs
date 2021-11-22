@@ -63,7 +63,7 @@ public class FieldOfView : MonoBehaviour
         if(useLocalTransform)
         {
             SetOrigin(transform.position);
-            SetAimDirection(transform.forward);
+            SetAimDirection(transform.forward); 
         }
 
         VisualiseFOVCone();

@@ -20,7 +20,7 @@ public class Timer
         this.timerEnd = timerEnd;
     }
 
-    public void Update()
+    public void Update()//NOTE!!! make sure to update the timer using this method.
     {
         if (!timerEnded && timerStarted)
         {
