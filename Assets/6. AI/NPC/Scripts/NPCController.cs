@@ -27,6 +27,8 @@ public class NPCController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        angle = transform.eulerAngles.y;
+
         _agent = GetComponent<NavMeshAgent>();
         if(_agent == null)
         {
@@ -48,6 +50,7 @@ public class NPCController : MonoBehaviour
         BTSequence followTargetSequence = new BTSequence(new List<BTNode>
         {
             new BTCanSeeTarget(fovController),
+            new BTRotateToTarget(this, fovController),
             new BTMoveToTarget(fovController, _agent),
             new BTPlayAnimation(_animatorController.rigController, _animatorController.drawAnimationName),
             new BTShootTarget(_shootingController, fovController)

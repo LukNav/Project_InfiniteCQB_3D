@@ -13988,6 +13988,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 92865192}
     m_Modifications:
+    - target: {fileID: 545465641715742605, guid: 880a9009a189c704991d0719056b7098, type: 3}
+      propertyPath: m_AngularSpeed
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 545465641715742606, guid: 880a9009a189c704991d0719056b7098, type: 3}
       propertyPath: m_Name
       value: Enemy

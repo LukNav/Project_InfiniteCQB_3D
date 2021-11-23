@@ -3,11 +3,13 @@
 public class BTRotateToRandomAngle : BTNode
 {
     private NPCController _npcController;
-
-    public BTRotateToRandomAngle(NPCController npcController)
+    private bool _randomiseDirection;
+    private float _angleIncrease;
+    public BTRotateToRandomAngle(NPCController npcController, float angleIncrease = 90f, bool randomiseDirection = true)
     {
         _npcController = npcController;
-        _npcController.angle = npcController.transform.eulerAngles.y;
+        _randomiseDirection = randomiseDirection;
+        _angleIncrease = angleIncrease;
     }
 
     public override BTNodeStates Evaluate()
@@ -29,11 +31,9 @@ public class BTRotateToRandomAngle : BTNode
 
     private void SetNewRandomAngle()
     {
-        Vector3 target = new Vector3(Random.Range(-10, 11), Random.Range(-10, 11));
-        float angle = Mathf.Atan2(target.x, target.y) * Mathf.Rad2Deg;
-        if (angle >= 180f) angle = -180f + angle;
-        if (angle <= -180f) angle = 180f + angle;
-        _npcController.angle = _npcController.transform.eulerAngles.y + 90f;
+        float direction = _randomiseDirection ? Random.Range(-1, 2) : 1;
+       
+        _npcController.angle = _npcController.transform.eulerAngles.y + _angleIncrease * direction;
 
         _npcController.angle -= _npcController.angle > 360f ? 360f : 0f;
     }
