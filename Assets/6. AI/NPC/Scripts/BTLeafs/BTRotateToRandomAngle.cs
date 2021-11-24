@@ -3,38 +3,46 @@
 public class BTRotateToRandomAngle : BTNode
 {
     private NPCController _npcController;
-    private bool _randomiseDirection;
+    private bool _shouldRandomiseDirection;
     private float _angleIncrease;
+
+    private float _lastSetAngle;
     public BTRotateToRandomAngle(NPCController npcController, float angleIncrease = 90f, bool randomiseDirection = true)
     {
         _npcController = npcController;
-        _randomiseDirection = randomiseDirection;
+        _shouldRandomiseDirection = randomiseDirection;
         _angleIncrease = angleIncrease;
+        _lastSetAngle = -9.99f;
     }
 
     public override BTNodeStates Evaluate()
     {
-        if (_npcController.isRotating)
-        {
-            currentNodeState = BTNodeStates.SUCCESS;//return SUCCESS if npc is rotating
-            return currentNodeState;
-        }
-        else
-        {
+        if (!IsAlreadyRotatingToSameDirection())
             SetNewRandomAngle();
-            _npcController.isRotating = true;
 
-            currentNodeState = BTNodeStates.FAILURE;//return failure if the npc is not rotating
-            return currentNodeState;
-        }
+        currentNodeState = BTNodeStates.SUCCESS;//return failure if the npc is not rotating
+        return currentNodeState;
     }
 
     private void SetNewRandomAngle()
     {
-        float direction = _randomiseDirection ? Random.Range(-1, 2) : 1;
+        float direction = _shouldRandomiseDirection ? Random.Range(-1, 2) : 1;
+        direction = direction == 0 ? 1 : direction;
        
         float angle = _npcController.transform.eulerAngles.y + _angleIncrease * direction;
+       
+
         angle -= angle > 360f ? 360f : 0f;
+        Debug.Log("Before: " + _lastSetAngle + " After: " + angle);
         _npcController.rotationAngle = angle;
+        _npcController.isRotating = true;
+        _npcController.elapsedRotationTime = 0f;
+
+        _lastSetAngle = angle;
+    }
+
+    private bool IsAlreadyRotatingToSameDirection()
+    {
+        return _lastSetAngle == _npcController.rotationAngle && _npcController.isRotating;
     }
 }

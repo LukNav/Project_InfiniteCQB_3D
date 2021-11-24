@@ -13,7 +13,7 @@ public class BTResetRotationTimer : BTNode
 
     public override BTNodeStates Evaluate()
     {
-        _npcController.elapsedTime = 0f;
+        _npcController.elapsedRotationTime = 0f;
         currentNodeState = BTNodeStates.SUCCESS;
         return currentNodeState;
     }

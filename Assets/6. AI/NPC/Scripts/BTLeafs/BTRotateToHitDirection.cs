@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class BTRotateToHitDirection : BTNode
 {
@@ -13,13 +14,15 @@ public class BTRotateToHitDirection : BTNode
 
     public override BTNodeStates Evaluate()
     {
-        if(IsAlreadyRotatingToDirection())
+        if (IsAlreadyRotatingToSameDirection())
         {
-            currentNodeState = BTNodeStates.FAILURE;
+            currentNodeState = BTNodeStates.SUCCESS;
             return currentNodeState;
         }
 
+        _npcController.elapsedRotationTime = 0f;
         SetAngleToTarget();
+
         _npcController.isRotating = true;
         currentNodeState = BTNodeStates.SUCCESS;
         return currentNodeState;
@@ -37,7 +40,7 @@ public class BTRotateToHitDirection : BTNode
         _npcController.rotationAngle = angle;
     }
 
-    private bool IsAlreadyRotatingToDirection()
+    private bool IsAlreadyRotatingToSameDirection()
     {
         return _hitDirection == _statsController.hitDirection;
     }

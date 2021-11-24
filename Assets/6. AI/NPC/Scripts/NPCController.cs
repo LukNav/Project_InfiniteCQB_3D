@@ -11,6 +11,7 @@ public class NPCController : MonoBehaviour
     [Header("Scan settings")]
     public float rotationDuration = 0.5f;
     public float scanDelay = 2f;
+    public float angleChangeDelay = 3;
 
 
     private NavMeshAgent _agent;
@@ -19,9 +20,10 @@ public class NPCController : MonoBehaviour
     public StatsController statsController { get; private set; }
     private BTSelector _rootBT;
     private Timer scanTimer;
+    private Timer angleChangeTimer;
 
     public bool isRotating = false;
-    public float elapsedTime = 0f;
+    public float elapsedRotationTime = 0f;
     public float rotationAngle;
     
 
@@ -57,14 +59,14 @@ public class NPCController : MonoBehaviour
 
 
         scanTimer = new Timer(scanDelay);
-
+        angleChangeTimer = new Timer(angleChangeDelay);
 
 
         BTSequence followTargetSequence = new BTSequence(new List<BTNode>
         {
             new BTCanSeeTarget(fovController),
             new BTTimer_Stop(scanTimer),
-            new BTResetHitInfo(statsController),
+            new BTTimer_Stop(angleChangeTimer),
             new BTRotateToTarget(this, fovController),
             new BTMoveToTarget(fovController, _agent),
             new BTPlayAnimation(_animatorController.rigController, _animatorController.drawAnimationName),
@@ -75,38 +77,49 @@ public class NPCController : MonoBehaviour
         BTSequence isHitSequence = new BTSequence(new List<BTNode>
         {
             new BTIsHit(statsController),
-            new BTSelector(new List<BTNode>
+            new BTRotateToHitDirection(this),
+            new BTSelector(new List<BTNode>//yEd Graph name: HasRotated
             {
-                new BTSequence(new List<BTNode>
-                {
-                    new BTRotateToHitDirection(this),
-                    new BTResetRotationTimer(this)
-                }),
                 new BTSequence(new List<BTNode>
                 {
                     new BTIsNotRotating(this),
+                    new BTTimer_Stop(scanTimer),
+                    new BTTimer_Stop(angleChangeTimer),
                     new BTResetHitInfo(statsController)
-                })
+                }),
+                new BTSuccess()
             })
         });
 
-        BTSelector scanSelector = new BTSelector(new List<BTNode>
+        BTSequence scanSequence = new BTSequence(new List<BTNode>
         {
-            new BTSequence (new List<BTNode>
+            new BTTimer_Start(scanTimer),
+            new BTSelector(new List<BTNode>//yEd Graph name: DelayTheScanningStart
             {
-                new BTTimer_HasEnded(scanTimer),
-                new BTRotateToRandomAngle(this),////////// THis is trash ----------
-                new BTResetRotationTimer(this),
-                new BTTimer_Stop(scanTimer)
-            }),
-            new BTTimer_Start(scanTimer)
+                new BTSequence(new List<BTNode>
+                {
+                    new BTTimer_HasEnded(scanTimer),
+                    new BTTimer_Start(angleChangeTimer),
+                    new BTSelector(new List<BTNode> //yEd Graph name: AngleChangeDelay
+                    {
+                        new BTSequence(new List<BTNode>
+                        {
+                            new BTTimer_HasEnded(angleChangeTimer),
+                            new BTRotateToRandomAngle(this, 90f, true),
+                            new BTTimer_Restart(angleChangeTimer)
+                        })
+                    }),
+                    new BTSuccess()
+                }),
+                new BTSuccess()
+            })
         });
 
         _rootBT = new BTSelector(new List<BTNode>
         {
             followTargetSequence,
             isHitSequence,
-            scanSelector
+            scanSequence
         });
     }
 
@@ -117,6 +130,7 @@ public class NPCController : MonoBehaviour
             _rootBT.Evaluate();
 
         scanTimer.Update();
+        angleChangeTimer.Update();
 
         RotateToSetAngle();
     }
@@ -127,15 +141,15 @@ public class NPCController : MonoBehaviour
             return;
 
         float currentRotation_y = transform.eulerAngles.y;
-        if (Mathf.Abs(currentRotation_y - rotationAngle) < 0.1f)//is npc rotated close enough to the angle
+        if (Mathf.Abs(Mathf.DeltaAngle(currentRotation_y, rotationAngle)) < 0.1f)//is npc rotated close enough to the angle
         {
             isRotating = false;
-            elapsedTime = 0f;
+            elapsedRotationTime = 0f;
         }
         else
         {
-            transform.eulerAngles = new Vector3(0f, Mathf.LerpAngle(currentRotation_y, rotationAngle, elapsedTime / rotationDuration), 0f);
-            elapsedTime += Time.deltaTime;
+            transform.eulerAngles = new Vector3(0f, Mathf.LerpAngle(currentRotation_y, rotationAngle, elapsedRotationTime / rotationDuration), 0f);
+            elapsedRotationTime += Time.deltaTime;
         }
     }
 
