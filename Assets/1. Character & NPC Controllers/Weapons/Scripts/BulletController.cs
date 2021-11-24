@@ -9,6 +9,7 @@ public class BulletController : MonoBehaviour
 
     private bool _isActive = false;
     private Vector3 _lastPos;
+    private RaycastHit _hit;
     //We don't want to destroy and instantiate bullets all the time - we want to enable and disable them, which is more effective
     private void OnEnable()
     {
@@ -35,11 +36,11 @@ public class BulletController : MonoBehaviour
             }
 
             Vector3 velocityDir = transform.position - _lastPos;
-            RaycastHit hit;
+            RaycastHit _hit;
 
-            if (Physics.Raycast(transform.position, velocityDir, out hit, 0.3f))
+            if (Physics.Raycast(transform.position, velocityDir, out _hit, 0.3f))
             {
-                OnHit(hit.collider, hit);
+                OnHit(_hit.collider, _hit);
             }
         }
     }
@@ -56,7 +57,13 @@ public class BulletController : MonoBehaviour
         DestroySelf();
     }
 
-    
+    public void OnCollisionEnter(Collision collision)
+    {
+    OnHit(collision.collider, _hit);
+
+    }
+
+
 
     private void DestroySelf()
     {

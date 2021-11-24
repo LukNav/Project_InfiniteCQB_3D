@@ -331,7 +331,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47d3d4107a706824e8979ccc1cc3f64d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 10000
+  health: 100
   animator: {fileID: 4917104708426571028}
   collider: {fileID: 545465640725152503}
   weaponCollider: {fileID: 297663837143917331}
