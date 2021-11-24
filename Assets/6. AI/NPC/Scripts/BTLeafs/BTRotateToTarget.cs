@@ -29,6 +29,9 @@ public class BTRotateToTarget : BTNode
         Vector3 direction = target.position - _npcController.transform.position;
         float angle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
 
-        _npcController.angle = angle;
+        if (angle == _npcController.rotationAngle)
+            return;
+
+        _npcController.rotationAngle = angle;
     }
 }

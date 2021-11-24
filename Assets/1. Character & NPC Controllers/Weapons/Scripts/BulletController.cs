@@ -39,21 +39,24 @@ public class BulletController : MonoBehaviour
 
             if (Physics.Raycast(transform.position, velocityDir, out hit, 0.3f))
             {
-                OnTriggerEnter(hit.collider);
+                OnHit(hit.collider, hit);
             }
         }
     }
 
-    public void OnTriggerEnter(Collider other)
+    public void OnHit(Collider other, RaycastHit hit)
     {
         Debug.Log("Bullet HIT");
         StatsController statsController = other.GetComponentInParent<StatsController>();
-        if(statsController != null)
+        if (statsController != null)
         {
-            statsController.TakeDamage(damage);
+            Vector3 hitDir =  transform.position - hit.point;//This direction is from the contact's perspective
+            statsController.TakeDamage(damage, hit.point, hitDir);
         }
         DestroySelf();
     }
+
+    
 
     private void DestroySelf()
     {

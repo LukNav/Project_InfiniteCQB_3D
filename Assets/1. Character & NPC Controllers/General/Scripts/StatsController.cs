@@ -20,16 +20,24 @@ public class StatsController : MonoBehaviour
     public delegate void DeathDelegate();
     public DeathDelegate deathDelegate;
 
-    bool isDead { get { return health <= 100; } }
 
+    public bool isHit { get; private set; }
+    public Vector3 hitPoint { get; private set; }
+    public Vector3 hitDirection { get; private set; }
+    bool isDead { get { return health <= 0; } }
 
     public void Start()
     {
+        isHit = false;
         deathDelegate += Die;
     }
 
-    public void TakeDamage(float damage)
+    public void TakeDamage(float damage, Vector3 hitPoint, Vector3 hitDirection)
     {
+        isHit = true;
+        this.hitPoint = hitPoint;
+        this.hitDirection = hitDirection;
+
         health -= damage;
         if (health <= 0)
         {
@@ -51,5 +59,12 @@ public class StatsController : MonoBehaviour
 
         
         //Destroy(gameObject);
+    }
+
+    public void ResetHitInfo()
+    {
+        isHit = false;
+        hitPoint = Vector3.zero;
+        hitDirection = Vector3.zero;
     }
 }

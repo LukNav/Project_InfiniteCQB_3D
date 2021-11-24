@@ -33,8 +33,8 @@ public class BTRotateToRandomAngle : BTNode
     {
         float direction = _randomiseDirection ? Random.Range(-1, 2) : 1;
        
-        _npcController.angle = _npcController.transform.eulerAngles.y + _angleIncrease * direction;
-
-        _npcController.angle -= _npcController.angle > 360f ? 360f : 0f;
+        float angle = _npcController.transform.eulerAngles.y + _angleIncrease * direction;
+        angle -= angle > 360f ? 360f : 0f;
+        _npcController.rotationAngle = angle;
     }
 }

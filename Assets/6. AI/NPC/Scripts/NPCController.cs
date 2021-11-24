@@ -16,18 +16,20 @@ public class NPCController : MonoBehaviour
     private NavMeshAgent _agent;
     private ShootingController _shootingController;
     private NPCAnimator _animatorController;
+    public StatsController statsController { get; private set; }
     private BTSelector _rootBT;
     private Timer scanTimer;
 
     public bool isRotating = false;
-    private float _elapsedTime = 0f;
-    public float angle = 0f;
+    public float elapsedTime = 0f;
+    public float rotationAngle;
+    
 
 
     // Start is called before the first frame update
     void Start()
     {
-        angle = transform.eulerAngles.y;
+        rotationAngle = transform.eulerAngles.y;
 
         _agent = GetComponent<NavMeshAgent>();
         if(_agent == null)
@@ -47,22 +49,54 @@ public class NPCController : MonoBehaviour
             Debug.LogError("Missing component: NPCAnimator");
         }
 
+        statsController = GetComponent<StatsController>();
+        if (statsController == null)
+        {
+            Debug.LogError("Missing component: StatsController");
+        }
+
+
+        scanTimer = new Timer(scanDelay);
+
+
+
         BTSequence followTargetSequence = new BTSequence(new List<BTNode>
         {
             new BTCanSeeTarget(fovController),
+            new BTTimer_Stop(scanTimer),
+            new BTResetHitInfo(statsController),
             new BTRotateToTarget(this, fovController),
             new BTMoveToTarget(fovController, _agent),
             new BTPlayAnimation(_animatorController.rigController, _animatorController.drawAnimationName),
             new BTShootTarget(_shootingController, fovController)
         });
 
-        scanTimer = new Timer(scanDelay);
+
+        BTSequence isHitSequence = new BTSequence(new List<BTNode>
+        {
+            new BTIsHit(statsController),
+            new BTSelector(new List<BTNode>
+            {
+                new BTSequence(new List<BTNode>
+                {
+                    new BTRotateToHitDirection(this),
+                    new BTResetRotationTimer(this)
+                }),
+                new BTSequence(new List<BTNode>
+                {
+                    new BTIsNotRotating(this),
+                    new BTResetHitInfo(statsController)
+                })
+            })
+        });
+
         BTSelector scanSelector = new BTSelector(new List<BTNode>
         {
             new BTSequence (new List<BTNode>
             {
                 new BTTimer_HasEnded(scanTimer),
-                new BTRotateToRandomAngle(this),
+                new BTRotateToRandomAngle(this),////////// THis is trash ----------
+                new BTResetRotationTimer(this),
                 new BTTimer_Stop(scanTimer)
             }),
             new BTTimer_Start(scanTimer)
@@ -71,6 +105,7 @@ public class NPCController : MonoBehaviour
         _rootBT = new BTSelector(new List<BTNode>
         {
             followTargetSequence,
+            isHitSequence,
             scanSelector
         });
     }
@@ -92,15 +127,15 @@ public class NPCController : MonoBehaviour
             return;
 
         float currentRotation_y = transform.eulerAngles.y;
-        if (Mathf.Abs(currentRotation_y - angle) < 0.1f)//is npc rotated close enough to the angle
+        if (Mathf.Abs(currentRotation_y - rotationAngle) < 0.1f)//is npc rotated close enough to the angle
         {
             isRotating = false;
-            _elapsedTime = 0f;
+            elapsedTime = 0f;
         }
         else
         {
-            transform.eulerAngles = new Vector3(0f, Mathf.LerpAngle(currentRotation_y, angle, _elapsedTime / rotationDuration), 0f);
-            _elapsedTime += Time.deltaTime;
+            transform.eulerAngles = new Vector3(0f, Mathf.LerpAngle(currentRotation_y, rotationAngle, elapsedTime / rotationDuration), 0f);
+            elapsedTime += Time.deltaTime;
         }
     }
 
