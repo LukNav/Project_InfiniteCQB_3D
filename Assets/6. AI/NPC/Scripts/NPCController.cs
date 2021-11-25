@@ -13,6 +13,8 @@ public class NPCController : MonoBehaviour
     public float scanDelay = 2f;
     public float angleChangeDelay = 3;
 
+    public GameObject weaponGO;
+
 
     private NavMeshAgent _agent;
     private ShootingController _shootingController;
@@ -31,6 +33,8 @@ public class NPCController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
+        GetComponent<StatsController>().deathDelegate += OnDeath;
         rotationAngle = transform.eulerAngles.y;
 
         _agent = GetComponent<NavMeshAgent>();
@@ -121,6 +125,11 @@ public class NPCController : MonoBehaviour
             isHitSequence,
             scanSequence
         });
+    }
+
+    private void OnDeath()
+    {
+        weaponGO.SetActive(false);
     }
 
     // Update is called once per frame

@@ -8,6 +8,7 @@ using UnityEngine;
 public class StatsController : MonoBehaviour
 {
     public float health = 100;
+    public float initialHealth { get; private set; }
 
     public Animator animator;// move this to other script, e.g. rigid body controller and subscribe to Die event
     public Collider collider;
@@ -20,14 +21,17 @@ public class StatsController : MonoBehaviour
     public delegate void DeathDelegate();
     public DeathDelegate deathDelegate;
 
+    public delegate void DamageDelegate();
+    public DamageDelegate damageDelegate;
 
     public bool isHit { get; private set; }
     public Vector3 hitPoint { get; private set; }
     public Vector3 hitDirection { get; private set; }
     bool isDead { get { return health <= 0; } }
 
-    public void Start()
+    public void Awake()
     {
+        initialHealth = health;
         isHit = false;
         deathDelegate += Die;
     }
@@ -44,6 +48,7 @@ public class StatsController : MonoBehaviour
             deathDelegate();
             return;
         }
+        damageDelegate();
     }
 
     private void Die()

@@ -12,6 +12,8 @@ public class FieldOfView : MonoBehaviour
     public float viewDistance = 7f;
     public LayerMask obstacleLayers;
     public GameObject fovPrefab;//prefab with mesh filter and mesh renderer components
+    public bool shouldVisualiseFOVField = false;
+    public float fovObstacleOverlapDistance = 0.1f;
 
     [Header("Target tracking")]
     public LayerMask targetsLayers;
@@ -51,6 +53,7 @@ public class FieldOfView : MonoBehaviour
     private void CreateFieldOfViewMesh()
     {
         _mesh = new Mesh();
+        _mesh.bounds = new Bounds(_origin, Vector3.one * 2000);
         _fovGameObject = Instantiate(fovPrefab);
         MeshFilter meshFilter = _fovGameObject.GetComponent<MeshFilter>();
         if (meshFilter == null)
@@ -66,7 +69,8 @@ public class FieldOfView : MonoBehaviour
             SetAimDirection(transform.forward); 
         }
 
-        VisualiseFOVCone();
+        if(shouldVisualiseFOVField)
+            VisualiseFOVCone();
         //if(lastVisibleTargetsListCount != visibleTargets.Count)
         SetVisibleTargets();
 
@@ -98,7 +102,7 @@ public class FieldOfView : MonoBehaviour
             }
             else
             {
-                vertex = raycastHit.point;
+                vertex = raycastHit.point + (raycastHit.point - _origin)*fovObstacleOverlapDistance;
             }
 
             vertices[vertexIndex] = vertex;

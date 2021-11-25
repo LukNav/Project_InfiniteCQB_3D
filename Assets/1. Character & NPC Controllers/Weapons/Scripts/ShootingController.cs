@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -20,6 +21,7 @@ public class ShootingController : MonoBehaviour
     public float fireRate = 0.3f;
     private float shootTimer;
     private bool isSprinting = false;
+    private bool _isWeaponDrawn = false;
 
     void Start()
     {
@@ -31,6 +33,13 @@ public class ShootingController : MonoBehaviour
             _bulletPool.Add(go);
         }
         shootTimer = 0f;
+
+        PlayerInputController.input_OnDrawWeaponDelegate += DrawWeapon;
+    }
+
+    private void DrawWeapon()
+    {
+        _isWeaponDrawn = true;
     }
 
     // Update is called once per frame
@@ -54,7 +63,7 @@ public class ShootingController : MonoBehaviour
 
     public void Fire()
     {
-        if(shootTimer > fireRate)
+        if(shootTimer > fireRate && _isWeaponDrawn)
         {
             shootTimer = 0f;
 

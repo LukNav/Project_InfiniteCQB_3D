@@ -48,14 +48,16 @@ MonoBehaviour:
   fov: 110
   rayCount: 40
   viewDistance: 7
-  fovObstaclesLayers:
+  obstacleLayers:
     serializedVersion: 2
-    m_Bits: 119
+    m_Bits: 0
+  fovPrefab: {fileID: 0}
+  shouldVisualiseFOVField: 0
+  targetsLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  useLocalTransform: 1
   visibleTargets: []
-  targetLayers:
-    serializedVersion: 2
-    m_Bits: 128
-  targetLockImagePrefab: {fileID: 5733187757677726566, guid: 9a515818e0094db4e8f3d062adf03bd5, type: 3}
 --- !u!33 &5549771381893584099
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -84,7 +86,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 8a38b7350df9a9c438e568993a00e5c5, type: 2}
+  - {fileID: 2100000, guid: 570218a47237ea641948483f1e6e145e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

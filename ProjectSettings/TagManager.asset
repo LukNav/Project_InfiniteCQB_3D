@@ -14,9 +14,9 @@ TagManager:
   - Terrain
   - Player
   - NPC
-  - 
-  - 
-  - 
+  - Mask
+  - FogOfWar
+  - FOVCollider
   - 
   - 
   - 
